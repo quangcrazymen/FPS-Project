@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -53,6 +54,11 @@ namespace StarterAssets
 
 		[Header("Climb rope")]
 		public bool OnTheRope = false;
+		[Header("Near The gun")]
+		public bool NearTheGun = false;
+        public string labelText = "";
+		public GameObject playerWeapon;
+		public Stack<GameObject> touchedObjects = new Stack<GameObject>();
 
 		// cinemachine
 		private float _cinemachineTargetPitch;
@@ -122,7 +128,14 @@ namespace StarterAssets
 			{
 				OnTheRope = false;
 			}
-			ClimbRope();
+            // Pick up the gun
+            if (NearTheGun && Input.GetKeyDown(KeyCode.E))
+            {
+                Debug.Log("You picked up a weapon");
+                NearTheGun = false;
+                Destroy(touchedObjects.Pop());
+            }
+            ClimbRope();
 			Move();
 		}
 
@@ -225,9 +238,34 @@ namespace StarterAssets
         #region Trigger
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log("You touch the rope!!!!");
-            //transform.Translate(Vector3.up,Space.World);
-            OnTheRope = true;
+			if(other.gameObject.name == "Rope")
+			{
+                Debug.Log("You touch the rope!!!!");
+                OnTheRope = true;
+			}
+			if(other.gameObject.name == "GunHeavy")
+			{
+				NearTheGun = true;
+				labelText = "Press E to pick the gun up";
+				touchedObjects.Push(other.gameObject);
+			}
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.gameObject.name == "GunHeavy")
+            {
+                NearTheGun = false;
+				touchedObjects.Pop();
+            }
+        }
+
+        private void OnGUI()
+        {
+            if(NearTheGun == true)
+			{
+                GUI.Box(new Rect(140, Screen.height - 50, Screen.width - 300, 120), (labelText));
+            }
         }
         #endregion // Trigger
         private void JumpAndGravity()
@@ -270,11 +308,6 @@ namespace StarterAssets
 				// if we are not grounded, do not jump
 				_input.jump = false;
 			}
-
-			//if(Grounded)
-			//{
-			//	_verticalVelocity = 0.0f;
-			//}
 
 			//// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
 			if (_verticalVelocity < _terminalVelocity)
