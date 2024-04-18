@@ -7,8 +7,6 @@ public class BasicRigidBodyPush : MonoBehaviour
 	public LayerMask pushLayers;
 	public bool canPush;
 	[Range(0.5f, 5f)] public float strength = 1.1f;
-	bool isOnTheRope = false;
-    private CharacterController _controller;
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
 	{
@@ -16,20 +14,12 @@ public class BasicRigidBodyPush : MonoBehaviour
 	}
     private void Start()
     {
-        //_controller = GetComponent<CharacterController>();
 
-    }
+	}
 
     private void Update()
     {
-		//if(isOnTheRope)
-		//{
-		//          transform.Translate(Vector3.up * Time.deltaTime + Vector3.up, Space.World);
-		//      }
-		if (isOnTheRope)
-		{
-			//_controller.Move(Vector3.up);	
-		}
+
     }
 
     private void PushRigidBodies(ControllerColliderHit hit)
@@ -54,11 +44,5 @@ public class BasicRigidBodyPush : MonoBehaviour
 		body.AddForce(pushDir * strength, ForceMode.Impulse);
 	}
 
-    private void OnTriggerEnter(Collider other)
-    {
-		
-		Debug.Log("You touch the rope!!!!");
-		//transform.Translate(Vector3.up,Space.World);
-		isOnTheRope = true;
-    }
+
 }

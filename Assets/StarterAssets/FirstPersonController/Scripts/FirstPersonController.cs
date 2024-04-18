@@ -51,6 +51,9 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
+		[Header("Climb rope")]
+		public bool OnTheRope = false;
+
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -114,6 +117,12 @@ namespace StarterAssets
 		{
 			JumpAndGravity();
 			GroundedCheck();
+			// Off the rope
+			if (Input.GetButtonDown("Cancel"))
+			{
+				OnTheRope = false;
+			}
+			ClimbRope();
 			Move();
 		}
 
@@ -198,7 +207,30 @@ namespace StarterAssets
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 
-		private void JumpAndGravity()
+		private void ClimbRope()
+		{
+			if (OnTheRope && _input.move.y!=0)
+			{
+                Vector3 inputDirection = new Vector3( 0.0f, _input.move.y, 0.0f).normalized;
+
+				_controller.Move(inputDirection * 10.0f * Time.deltaTime);
+
+				Gravity = 0;
+			}
+			else if (!OnTheRope)
+			{
+				Gravity = -15.0f;
+			}
+		}
+        #region Trigger
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log("You touch the rope!!!!");
+            //transform.Translate(Vector3.up,Space.World);
+            OnTheRope = true;
+        }
+        #endregion // Trigger
+        private void JumpAndGravity()
 		{
 			if (Grounded)
 			{
@@ -239,7 +271,12 @@ namespace StarterAssets
 				_input.jump = false;
 			}
 
-			// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+			//if(Grounded)
+			//{
+			//	_verticalVelocity = 0.0f;
+			//}
+
+			//// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
 			if (_verticalVelocity < _terminalVelocity)
 			{
 				_verticalVelocity += Gravity * Time.deltaTime;
