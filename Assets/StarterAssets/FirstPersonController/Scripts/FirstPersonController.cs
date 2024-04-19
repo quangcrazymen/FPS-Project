@@ -57,8 +57,13 @@ namespace StarterAssets
 		[Header("Near The gun")]
 		public bool NearTheGun = false;
         public string labelText = "";
-		public GameObject playerWeapon;
+		public GameObject mPlayerWeapon = null;
+		public GameObject mGunContainer;
 		public Stack<GameObject> touchedObjects = new Stack<GameObject>();
+
+		// Target
+		public Animator mTargetAnimator;
+		public Animator mTargetAnimator2;
 
 		// cinemachine
 		private float _cinemachineTargetPitch;
@@ -117,7 +122,11 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
-		}
+
+			// Gun
+			mGunContainer = GameObject.Find("GunContainer");
+
+        }
 
 		private void Update()
 		{
@@ -133,8 +142,10 @@ namespace StarterAssets
             {
                 Debug.Log("You picked up a weapon");
                 NearTheGun = false;
-                Destroy(touchedObjects.Pop());
-            }
+                mPlayerWeapon = touchedObjects.Pop();
+				mPlayerWeapon.transform.parent = mGunContainer.transform;
+				mPlayerWeapon.transform.rotation = mGunContainer.transform.rotation;
+			}
             ClimbRope();
 			Move();
 		}
@@ -249,11 +260,16 @@ namespace StarterAssets
 				labelText = "Press E to pick the gun up";
 				touchedObjects.Push(other.gameObject);
 			}
+            if (other.gameObject.name == "TriggerPoint")
+			{
+				mTargetAnimator.SetBool("isPopup", true);
+				mTargetAnimator2.SetBool("isPopup", true);
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name == "GunHeavy")
+            if (other.gameObject.name == "GunHeavy" && mPlayerWeapon == null)
             {
                 NearTheGun = false;
 				touchedObjects.Pop();
