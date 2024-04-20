@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.InputSystem.Controls;
+﻿using UnityEngine;
 
 public class BasicRigidBodyPush : MonoBehaviour
 {
@@ -8,21 +6,12 @@ public class BasicRigidBodyPush : MonoBehaviour
 	public bool canPush;
 	[Range(0.5f, 5f)] public float strength = 1.1f;
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+	private void OnControllerColliderHit(ControllerColliderHit hit)
 	{
 		if (canPush) PushRigidBodies(hit);
 	}
-    private void Start()
-    {
 
-	}
-
-    private void Update()
-    {
-
-    }
-
-    private void PushRigidBodies(ControllerColliderHit hit)
+	private void PushRigidBodies(ControllerColliderHit hit)
 	{
 		// https://docs.unity3d.com/ScriptReference/CharacterController.OnControllerColliderHit.html
 
@@ -43,6 +32,4 @@ public class BasicRigidBodyPush : MonoBehaviour
 		// Apply the push and take strength into account
 		body.AddForce(pushDir * strength, ForceMode.Impulse);
 	}
-
-
 }

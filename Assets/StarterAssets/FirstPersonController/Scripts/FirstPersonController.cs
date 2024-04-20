@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -59,7 +61,10 @@ namespace StarterAssets
         public string labelText = "";
 		public GameObject mPlayerWeapon = null;
 		public GameObject mGunContainer;
-		public Stack<GameObject> touchedObjects = new Stack<GameObject>();
+		public float gunContainerOffsetX = 0.2f;
+		public float gunContainerOffsetY = 0.2f;
+		//public Stack<GameObject> touchedObjects = new Stack<GameObject>();
+		public GameObject touchedObject = null;
 
 		// Target
 		public Animator mTargetAnimator;
@@ -142,11 +147,26 @@ namespace StarterAssets
             {
                 Debug.Log("You picked up a weapon");
                 NearTheGun = false;
-                mPlayerWeapon = touchedObjects.Pop();
+				mPlayerWeapon = touchedObject;
 				mPlayerWeapon.transform.parent = mGunContainer.transform;
-				mPlayerWeapon.transform.rotation = mGunContainer.transform.rotation;
+				//mPlayerWeapon.transform.position = new Vector3(
+				//	mGunContainer.transform.parent.parent.position.x,
+				//	mGunContainer.transform.position.y,
+    //                mGunContainer.transform.parent.parent.position.z);
+
+                mPlayerWeapon.transform.rotation = mGunContainer.transform.rotation;
 			}
-            ClimbRope();
+			// Drop the gun
+			if (mPlayerWeapon != null && Input.GetKeyDown(KeyCode.Q))
+			{
+				mPlayerWeapon.transform.parent = transform.parent;
+				mPlayerWeapon.transform.rotation = Quaternion.identity;
+				mPlayerWeapon = null;
+			}
+			// Adjust the position of gun container
+			//mGunContainer.transform.position = new Vector3(mGunContainer.transform.position.x + gunContainerOffsetX
+			//	, mGunContainer.transform.position.y + gunContainerOffsetY, mGunContainer.transform.position.z);
+			ClimbRope();
 			Move();
 		}
 
@@ -258,7 +278,7 @@ namespace StarterAssets
 			{
 				NearTheGun = true;
 				labelText = "Press E to pick the gun up";
-				touchedObjects.Push(other.gameObject);
+				touchedObject = other.gameObject;
 			}
             if (other.gameObject.name == "TriggerPoint")
 			{
@@ -272,7 +292,11 @@ namespace StarterAssets
             if (other.gameObject.name == "GunHeavy" && mPlayerWeapon == null)
             {
                 NearTheGun = false;
-				touchedObjects.Pop();
+				touchedObject = null;
+				//if (touchedObjects.Count != 0)
+				//{
+    //                touchedObjects.Pop();
+				//}
             }
         }
 
