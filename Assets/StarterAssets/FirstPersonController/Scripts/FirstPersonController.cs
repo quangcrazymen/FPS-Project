@@ -152,9 +152,13 @@ namespace StarterAssets
 				//mPlayerWeapon.transform.position = new Vector3(
 				//	mGunContainer.transform.parent.parent.position.x,
 				//	mGunContainer.transform.position.y,
-    //                mGunContainer.transform.parent.parent.position.z);
+				//                mGunContainer.transform.parent.parent.position.z);
+				mPlayerWeapon.transform.position = mGunContainer.transform.position;
+				mPlayerWeapon.transform.localRotation =/* mGunContainer.transform.localRotation;*/
+				new Quaternion(-0.07011136f, -0.0597956f, 0.0f, 0.9957454f);
 
-                mPlayerWeapon.transform.rotation = mGunContainer.transform.rotation;
+
+				//mPlayerWeapon.transform.rotation = mGunContainer.transform.parent.rotation;
 			}
 			// Drop the gun
 			if (mPlayerWeapon != null && Input.GetKeyDown(KeyCode.Q))
