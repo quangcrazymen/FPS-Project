@@ -31,11 +31,6 @@ public class SwayAndBlob : MonoBehaviour
     [Header("Bob Rotation")]
     public Vector3 multiplier;
     Vector3 bobEulerRotation;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
     void GetInput()
     {
         //walkInput.x = Input.GetAxis("Horizontal");
